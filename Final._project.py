@@ -25,7 +25,51 @@ class Passenger(User):
 
     def get_passport_no(self):
         return self.__passport_no
+        
 
+class CabinCrew(People):
+    def __init__(self, name, age, phone, address, ID, position, languages_spoken: list, training_completed: list):
+        super().__init__(name, age, phone, address, ID, position)
+        self.__languages_spoken = languages_spoken
+        self.__training_completed = training_completed
+        self.assigned_flight = []
+
+    def assign_flight(self, flight_number):
+        if not self.__training_completed:
+            return "Training not completed. Cannot assign flight."
+        else:
+            self.assigned_flight.append(flight_number)
+            return f"This crew is assigned for flight: {flight_number}"
+
+    def get_info(self):
+        return f"name: {self.name}, ID: {self.ID}, position: {self.position}, assigned_flight: {self.assigned_flight}"
+
+
+class GroundStaff(People):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(GroundStaff, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self, name, age, phone, address, ID, position, shift_time, assigned_gate, experience):
+        if not hasattr(self, 'initialized'):
+            super().__init__(name, age, phone, address, ID, position)
+            self.shift_time = shift_time
+            self.assigned_gate = assigned_gate
+            self.experience = experience
+            self.initialized = True
+
+    def update_experience(self, name, years_to_add):
+        if self.name == name:
+            self.experience += years_to_add
+            return True
+        else:
+            return False
+
+    def get_info(self):
+        return f"name: {self.name}, ID: {self.ID}, position: {self.position}, shift_time: {self.shift_time}, assigned_gate: {self.assigned_gate}, experience: {self.experience}"
 
 # Abstract Base Class for Airline Entities
 class AirlineEntity(ABC):
